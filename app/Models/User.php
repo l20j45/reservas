@@ -6,21 +6,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+
+     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'name',
+        'nombres',
+        'apellidos',
+        'telefono',
+        'foto',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -45,4 +53,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id' );
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function consultantReservations()
+    {
+        return $this->hasMany(Reservation::class, 'consultant_id');
+    }
+
+
 }
