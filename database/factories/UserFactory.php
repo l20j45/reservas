@@ -24,7 +24,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'nombres' => fake()->name(),
+            'apellidos' => fake()->lastName(),
+            'telefono' => fake()->phoneNumber(),
+            'foto' => 'https://www.gravatar.com/avatar/',
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
