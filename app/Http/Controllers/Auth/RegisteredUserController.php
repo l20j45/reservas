@@ -44,13 +44,13 @@ class RegisteredUserController extends Controller
         }
 
         $user = User::create([
-            'nombres' => $request->name,
+            'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
             'telefono' => $request->telefono,
             'email' => $request->email,
             'foto' => $fotoPath,
             'password' => Hash::make($request->password),
-            'rol_id'=>3
+            'rol_id'=>'3',
         ]);
 
         event(new Registered($user));
