@@ -1,0 +1,13 @@
+services:
+  db:
+    image: mysql
+    restart: always
+    ports:
+      - 3311:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: LocalTest
+      MYSQL_DATABASE: reservas
+    volumes:
+      - reservas:/var/lib/mysql
+volumes:
+  reservas:
