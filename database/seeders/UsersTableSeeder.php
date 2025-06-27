@@ -22,15 +22,15 @@ class UsersTableSeeder extends Seeder
             'email' => 'admin@test.com',
             'foto' => 'https://www.gravatar.com/avatar/',
             'password' => Hash::make('password'),
-            'rol_id' => 1,
+            'role_id' => 1,
         ]);
 
         User::factory()->count(3)->create([
-            'rol_id' => 2,
+            'role_id' => 2,
         ]);
 
         User::factory()->count(10)->create([
-            'rol_id' => 3,
+            'role_id' => 3,
         ]);
     }
 }

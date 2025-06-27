@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'foto' => $fotoPath,
             'password' => Hash::make($request->password),
-            'rol_id'=>'3',
+            'role_id' => '3',
         ]);
 
         event(new Registered($user));

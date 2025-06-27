@@ -30,7 +30,7 @@
 
                     <div id="two-column-menu">
                     </div>
-                    @if (Auth::check() && Auth::user()->rol_id == 3)
+                    @if (Auth::check() && Auth::user()->role_id == 3)
                         <ul class="navbar-nav" id="navbar-nav">+
 
                             <li class="menu-title"><span data-key="t-menu">Usuarios</span></li>
@@ -52,7 +52,7 @@
 
                         </ul>
                     @endif
-                    @if (Auth::check() && Auth::user()->rol_id == 2)
+                    @if (Auth::check() && Auth::user()->role_id == 2)
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><span data-key="t-menu">Consultor</span></li>
                             <li class="nav-item">
@@ -64,7 +64,7 @@
 
                         </ul>
                     @endif
-                    @if (Auth::check() && Auth::user()->rol_id == 1)
+                    @if (Auth::check() && Auth::user()->role_id == 1)
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><span data-key="t-menu">Administrador</span></li>
                             <li class="nav-item">
@@ -77,7 +77,7 @@
                                 <a class="nav-link menu-link" href="#">
                                     <i class="ri-dashboard-2-line"></i> <span>Ver pagos</span>
                                 </a>
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('usuarios.index') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Usuarios</span>
                                 </a>
 
