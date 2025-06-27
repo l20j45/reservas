@@ -1,15 +1,14 @@
 <x-app-layout>
     @push('styles')
-   @endpush
+    @endpush
 
 
-Holis
-@foreach ($roles as $role)
-
-    <span>
-        {{ $role->name }}
-    </span>
-@endforeach
+    Holis
+    @foreach ($roles as $role)
+        <span>
+            {{ $role->name }}
+        </span>
+    @endforeach
 
 
 
@@ -19,8 +18,6 @@ Holis
 
 
     @push('scripts')
-
-
     @endpush
 
 </x-app-layout>
