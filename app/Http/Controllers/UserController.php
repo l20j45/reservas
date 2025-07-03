@@ -28,7 +28,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // Log del inicio del proceso y los datos recibidos
-        Log::info('Iniciando proceso de creación de usuario.', ['request_data' => $request->all()]);
+        // Log::info('Iniciando proceso de creación de usuario.', ['request_data' => $request->all()]);
 
         // En lugar de dd(), que detiene la ejecución, puedes usar Log para depurar
         // Log::debug('Datos completos del request', $request->all());
@@ -101,38 +101,72 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id, // Permite el mismo email para el usuario actual
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $usuario = User::findOrFail($id);
-        if (!$usuario) {
-            return redirect()->route('usuarios.index')->with('error', 'Usuario no encontrado.');
+
+        // Log en caso de que la validación falle
+        if ($validator->fails()) {
+            Log::error('La validación para crear usuario falló.', [
+                'errors' => $validator->errors()
+            ]);
+            // Redirige de vuelta con los errores
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $fotoPath = $usuario->foto;
-        if ($request->hasFile('foto')) {
-            if ($fotoPath) {
-                Storage::disk('public')->delete($fotoPath);
+        try {
+            $fotoPath = null;
+            if ($request->hasFile('foto')) {
+                Log::info('Se encontró un archivo de foto para subir.');
+                $fotoPath = $request->file('foto')->store('fotos', 'public');
+                Log::info('La foto se guardó exitosamente en: ' . $fotoPath);
+            } else {
+                Log::info('No se proporcionó una nueva foto, manteniendo la foto existente.');
             }
-            $fotoPath = $request->file('foto')->store('fotos', 'public');
+
+            $usuario = User::findOrFail($id);
+            if (!$usuario) {
+                return redirect()->route('usuarios.index')->with('error', 'Usuario no encontrado.');
+            }
+
+            $usuario->update([
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'telefono' => $request->telefono,
+                'email' => $request->email,
+                'foto' => $fotoPath,
+                'role_id' => $request->role_id,
+            ]);
+
+            Log::info('Usuario actualizado exitosamente.', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+
+            return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente.');
+
+        } catch (\Exception $e) {
+            // Log si ocurre cualquier otro error durante la creación
+            Log::error('Ocurrió un error al crear el usuario.', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString() // Opcional: para un rastreo completo del error
+            ]);
+
+            // Redirige con un mensaje de error
+            return redirect()->back()->with('error', 'Ocurrió un error inesperado al actualizar el usuario.');
         }
 
-        $usuario->update([
-            'nombres' => $request->nombres,
-            'apellidos' => $request->apellidos,
-            'telefono' => $request->telefono,
-            'email' => $request->email,
-            'foto' => $fotoPath,
-            'role_id' => $request->role_id,
-        ]);
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente.');
+
+
+
+
+
+
+
     }
 
     public function destroy($id)
