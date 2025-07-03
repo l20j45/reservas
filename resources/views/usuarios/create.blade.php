@@ -30,18 +30,127 @@
         </div>
     </div>
 
+
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Listado de Usuarios</h5>
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Nuevo Usuario</h4>
                 </div>
                 <div class="card-body">
-                    <a href="{{ route('usuarios.create') }}" class="btn btn-primary waves-effect waves-light">Nuevo
-                        Registro</a>
-                    <br>
-                    <br>
+                    <form class="row gy-1" method="POST" action="{{ route('usuarios.store') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="nombres" class="form-label">{{ __('Nombres') }}</label>
+                                <input type="text" class="form-control @error('nombres') is-invalid @enderror"
+                                    id="nombres" name="nombres" value="{{ old('nombres') }}" required autofocus>
+                                @error('nombres')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
 
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="apellidos" class="form-label">{{ __('Apellidos') }}</label>
+                                <input type="text" class="form-control @error('apellidos') is-invalid @enderror"
+                                    id="apellidos" name="apellidos" value="{{ old('apellidos') }}" required>
+                                @error('apellidos')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="telefono" class="form-label">{{ __('Teléfono') }}</label>
+                                <input type="text" class="form-control @error('telefono') is-invalid @enderror"
+                                    id="telefono" name="telefono" value="{{ old('telefono') }}" required>
+                                @error('telefono')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="role_id" class="form-label">{{ __('Rol') }}</label>
+                                <select class="form-select @error('role_id') is-invalid @enderror" id="role_id"
+                                    name="role_id" required>
+                                    @foreach ($roles as $rol)
+                                        <option value="{{ $rol->id }}">{{ $rol->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('role_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="email" class="form-label">{{ __('Correo Electrónico') }}</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                    id="email" name="email" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="password" class="form-label">{{ __('Contraseña') }}</label>
+                                <input type="text" class="form-control" id="password" name="password"
+                                    value="password" readonly>
+                            </div>
+                        </div>
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="password-confirm" class="form-label">{{ __('Confirmar Contraseña') }}</label>
+                                <input type="text" class="form-control" id="password-confirm" name="password_confirmation"
+                                    value="password" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label for="foto" class="form-label">{{ __('Foto (Opcional)') }}</label>
+                                <input type="file" id="foto" name="foto"
+                                    class="form-control pe-5 @error('foto') is-invalid @enderror">
+                                @error('foto')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-12 col-md-6">
+                            <div>
+                                <br>
+                                <a href="{{ route('usuarios.index') }}" class="btn btn-danger">
+                                    {{ __('Cancelar') }}
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Guardar Registro') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -50,8 +159,8 @@
 
 
 
-    @push('scripts')
 
+    @push('scripts')
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
@@ -65,49 +174,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-
-
-        <script>
-            $(document).ready(function() {
-                $('#usuariosTable').DataTable();
-            })
-        </script>
-
-        @if (session('success'))
-            <script>
-                Toastify({
-                    text: "{{ session('success') }}",
-                    duration: 2000,
-                    close: true,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
-                    stopOnFocus: true, // Prevents dismissing of toast on hover
-                    style: {
-                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                    },
-                }).showToast();
-            </script>
-        @endif
-
-        <script>
-            function confirmarEliminacion(usuarioId) {
-                Swal.fire({
-                    title: "¿Estás Seguro?",
-                    text: "No podrás revertir esta acción!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('delete-form-' + usuarioId).submit();
-                    }
-                });
-            }
-        </script>
-
     @endpush
 
 </x-app-layout>

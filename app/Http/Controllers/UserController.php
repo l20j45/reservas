@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator; // Importa el Validador para un logging más detallado
+
 
 class UserController extends Controller
 {
@@ -25,7 +27,13 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        // Log del inicio del proceso y los datos recibidos
+        Log::info('Iniciando proceso de creación de usuario.', ['request_data' => $request->all()]);
+
+        // En lugar de dd(), que detiene la ejecución, puedes usar Log para depurar
+        // Log::debug('Datos completos del request', $request->all());
+
+        $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
@@ -35,22 +43,49 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('fotos', 'public');
+        // Log en caso de que la validación falle
+        if ($validator->fails()) {
+            Log::error('La validación para crear usuario falló.', [
+                'errors' => $validator->errors()
+            ]);
+            // Redirige de vuelta con los errores
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        User::create([
-            'nombres' => $request->nombres,
-            'apellidos' => $request->apellidos,
-            'telefono' => $request->telefono,
-            'email' => $request->email,
-            'foto' => $fotoPath,
-            'password' => Hash::make('password'), // Default password, change as needed
-            'role_id' => $request->role_id,
-        ]);
+        // Log::info('La validación de datos fue exitosa.');
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente.');
+        try {
+            $fotoPath = null;
+            if ($request->hasFile('foto')) {
+                Log::info('Se encontró un archivo de foto para subir.');
+                $fotoPath = $request->file('foto')->store('fotos', 'public');
+                Log::info('La foto se guardó exitosamente en: ' . $fotoPath);
+            }
+
+            $user = User::create([
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'telefono' => $request->telefono,
+                'email' => $request->email,
+                'foto' => $fotoPath,
+                'password' => Hash::make($request->password), // ¡Importante! Usa el password del request, no uno fijo.
+                'role_id' => $request->role_id,
+            ]);
+
+            Log::info('Usuario creado exitosamente.', ['user_id' => $user->id, 'email' => $user->email]);
+
+            return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente.');
+
+        } catch (\Exception $e) {
+            // Log si ocurre cualquier otro error durante la creación
+            Log::error('Ocurrió un error al crear el usuario.', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString() // Opcional: para un rastreo completo del error
+            ]);
+
+            // Redirige con un mensaje de error
+            return redirect()->back()->with('error', 'Ocurrió un error inesperado al crear el usuario.');
+        }
     }
 
     public function edit($id)
