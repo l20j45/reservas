@@ -23,4 +23,8 @@ Route::resource('usuarios', \App\Http\Controllers\UserController::class)
     ->middleware(['auth', 'verified'])
     ->names('usuarios');
 
+Route::resource('reservas', \App\Http\Controllers\ReservationController::class)
+    ->middleware(['auth', 'verified'])
+    ->names('reservations');
+
 require __DIR__ . '/auth.php';
