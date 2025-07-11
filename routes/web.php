@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+USE App\Http\Controllers\ReservationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,12 +21,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('usuarios', \App\Http\Controllers\UserController::class)
+Route::resource('usuarios', UserController::class)
     ->middleware(['auth', 'verified'])
     ->names('usuarios');
 
-Route::resource('reservas', \App\Http\Controllers\ReservationController::class)
+Route::resource('reservas', ReservationController::class)
     ->middleware(['auth', 'verified'])
     ->names('reservations');
+
+Route::post('reservations.cancel',[ReservationController::class,'cancel'])->name('reservations.cancel');
 
 require __DIR__ . '/auth.php';

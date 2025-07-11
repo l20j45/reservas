@@ -29,12 +29,16 @@ class ReservationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $user = User::where('role_id', 3)->whereNull('deleted_at')->get();
-        $consultant = User::where('role_id', 2)->whereNull('deleted_at')->get();
-        return view('reservation.create', compact('user', 'consultant'));
+    public function create() {
+        // Obtener los usuarios con rol de cliente (rol_id = 3)
+        $users = User::where('role_id', 3)->whereNull('deleted_at')->get();
+        // Obtener los consultores (rol_id = 2)
+        $consultants = User::where('role_id', 2)->whereNull('deleted_at')->get();
+        return view('reservation.create', compact('users', 'consultants'));
     }
+
+    // Método para mostrar la vista de creación de una reserva desde el lado del cliente
+
 
     /**
      * Store a newly created resource in storage.
@@ -43,7 +47,7 @@ class ReservationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'consultant_id' => 'required|exists:users,id',
+            'consultand_id' => 'required|exists:users,id',
             'reservation_date' => 'required|date',
             'start_time' => 'required|date_format:H:i|after_or_equal:09:00|before_or_equal:17:00',
             'end_time' => 'required|date_format:H:i|after:start_time|before_or_equal:17:00',
@@ -51,7 +55,9 @@ class ReservationController extends Controller
             'payment_status' => 'required|in:pendiente,pagado,fallido',
             'total_amount' => 'required|numeric|min:0',
         ]);
-
+        Log::info('Listado de reservas obtenido exitosamente.', [
+            'datos' => $request
+        ]);
         // Log en caso de que la validación falle
         if ($validator->fails()) {
             Log::error('La validación para crear la reserva falló.', [
@@ -64,7 +70,7 @@ class ReservationController extends Controller
         try {
             $reservation = Reservation::create([
                 'user_id' => $request->user_id,
-                'consultant_id' => $request->consultant_id,
+                'consultand_id' => $request->consultand_id,
                 'reservation_date' => $request->reservation_date,
                 'start_time' => $request->start_time,
                 'end_time' => $request->end_time,
@@ -75,7 +81,7 @@ class ReservationController extends Controller
 
             Log::info('Reserva creada exitosamente.', ['reservation_id' => $reservation->id]);
 
-            return redirect()->route('reservation.index')->with('success', 'Reserva creada exitosamente.');
+            return redirect()->route('reservations.index')->with('success', 'Reserva creada exitosamente.');
 
         } catch (\Exception $e) {
             // Log si ocurre cualquier otro error durante la creación
