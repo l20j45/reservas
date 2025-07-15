@@ -39,6 +39,7 @@
                         class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                         <thead>
                             <tr>
+                                <th>ID #</th>
                                 <th>Usuario</th>
                                 <th>Consultor</th>
                                 <th>Fecha</th>
@@ -52,6 +53,7 @@
                         <tbody>
                             @foreach ($reservations as $reservation)
                                 <tr>
+                                    <td>{{ $reservation->id }}</td>
                                     <td>{{ $reservation->user->nombres }} {{ $reservation->user->apellidos }}</td>
                                     <td>{{ $reservation->consultant->nombres }}
                                         {{ $reservation->consultant->apellidos }}</td>
@@ -142,7 +144,7 @@
                                     data: {
                                         _token: "{{ csrf_token() }}", // Token CSRF para la seguridad de Laravel
                                         reservation_id: reservationId, // ID de la reserva
-                                        cancellation_reason: cancellationReason, // Razón de la cancelación
+                                        cancelation_reason: cancellationReason, // Razón de la cancelación
                                     },
                                     success: function(response) {
                                         // Si la solicitud es exitosa y la reserva fue cancelada
