@@ -23,8 +23,6 @@ class ReservationController extends Controller
             'reservations' => $reservations
         ]);
         return view('reservation.index', compact('reservations'));
-
-
     }
 
     /**
@@ -219,6 +217,39 @@ class ReservationController extends Controller
             // Redirige con un mensaje de error
             return redirect()->back()->with('error', 'Ocurrió un error inesperado al actualizar el usuario.');
         }
+    }
+
+
+        public function getAllReservations(){
+        $reservations = Reservation::all();
+        $events = [];
+        foreach($reservations as $reservation){
+            $color = '#28a745';
+            $bordercolor = '#28a745';
+
+            if($reservation->reservation_status === 'pendiente'){
+                $color = '#ffc107';
+                $bordercolor = '#ffc107';
+            }elseif($reservation->reservation_status === 'cancelada'){
+                $color = '#dc3545';
+                $bordercolor = '#dc3545';
+            }
+
+            $events[] = [
+                'title' => 'Reserva de '. $reservation->user->nombres .' '. $reservation->user->apellidos .' con ' . $reservation->consultant->nombres .' '. $reservation->consultant->apellidos,
+                'start' => $reservation->reservation_date.'T'.$reservation->start_time,
+                'end' => $reservation->reservation_date.'T'.$reservation->end_time,
+                'backgroundColor' => $color,
+                'borderColor' => $bordercolor,
+            ];
+        }
+
+        log::info('Obteniendo todas las reservas para el calendario.');
+
+         // Retorna los eventos en formato JSON
+         header('Content-Type: application/json');
+
+        return response()->json($events);
     }
 
     /**

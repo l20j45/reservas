@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-USE App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReservationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,6 +29,12 @@ Route::resource('reservas', ReservationController::class)
     ->middleware(['auth', 'verified'])
     ->names('reservations');
 
-Route::post('reservations.cancel',[ReservationController::class,'cancel'])->name('reservations.cancel');
+Route::post('reservations.cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+
+Route::get('/reservations/calendario', function () {
+    return view('reservation.calendario');
+})->name('reservations.calendario');
+
+Route::get('administrador/fullcalendar', [ReservationController::class, 'getAllReservations'])->name('administrador.fullcalendar');
 
 require __DIR__ . '/auth.php';

@@ -68,11 +68,14 @@
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><span data-key="t-menu">Administrador</span></li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('reservations.create') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Nueva Reserva</span>
                                 </a>
                                 <a class="nav-link menu-link" href="{{ route('reservations.index') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Consultar Reserva</span>
+                                </a>
+                                <a class="nav-link menu-link" href="{{ route('reservations.calendario') }}">
+                                    <i class="ri-dashboard-2-line"></i> <span>Calendario</span>
                                 </a>
                                 <a class="nav-link menu-link" href="#">
                                     <i class="ri-dashboard-2-line"></i> <span>Ver pagos</span>
