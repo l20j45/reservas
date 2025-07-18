@@ -41,7 +41,7 @@
                                 <a class="nav-link menu-link" href="#">
                                     <i class="ri-dashboard-2-line"></i> <span>Consultar Reserva</span>
                                 </a>
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('cliente.calendario') }}">
                                     <i class="ri-dashboard-2-line"></i> <span> Calendario</span>
                                 </a>
                                 <a class="nav-link menu-link" href="#">
@@ -56,7 +56,7 @@
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><span data-key="t-menu">Consultor</span></li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('asesor.calendario') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Calendario</span>
                                 </a>
 

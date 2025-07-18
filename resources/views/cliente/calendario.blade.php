@@ -10,7 +10,6 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css">
     @endpush
 
-
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -18,7 +17,7 @@
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Administrador</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Cliente</a></li>
                         <li class="breadcrumb-item active">Calendario</li>
                     </ol>
                 </div>
@@ -58,45 +57,43 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 
-
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Obtiene el elemento del DOM donde se mostrará el calendario
+                // Cuando el DOM esté completamente cargado, obtener el elemento con id 'calendar'
                 var calendarE1 = document.getElementById('calendar');
 
-                // Inicializa el calendario con FullCalendar
+                // Inicializa el calendario usando FullCalendar
                 var calendar = new FullCalendar.Calendar(calendarE1, {
-                    height: 800,
-                    initialView: 'dayGridMonth', // Vista inicial del calendario (vista por mes)
-                    locale: 'es', // Establece el idioma en español
-                    headerToolbar: { // Configura las opciones de navegación en el calendario
-                        left: 'prev,next today', // Botones prev, next y today a la izquierda
-                        center: 'title', // Título del calendario (mes o día actual) en el centro
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay', // Vistas disponibles: mes, semana, día a la derecha
+                    initialView: 'dayGridMonth', // Vista inicial por mes
+                    locale: 'es', // Establece el idioma del calendario a español
+                    headerToolbar: { // Configuración de la barra de herramientas del encabezado
+                        left: 'prev,next today', // Botones prev, next y hoy en el lado izquierdo
+                        center: 'title', // El título (nombre del mes o día) en el centro
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay', // Botones para cambiar la vista entre mes, semana y día en el lado derecho
                     },
-                    buttonText: { // Traduce los textos de los botones
-                        today: 'Hoy', // Texto para el botón "Hoy"
-                        month: 'Mes', // Texto para la vista mensual
-                        week: 'Semana', // Texto para la vista semanal
-                        day: 'Día', // Texto para la vista diaria
+                    buttonText: { // Personaliza el texto de los botones
+                        today: 'Hoy', // Texto del botón para "Hoy"
+                        month: 'Mes', // Texto del botón para la vista mensual
+                        week: 'Semana', // Texto del botón para la vista semanal
+                        day: 'Día', // Texto del botón para la vista diaria
                     },
-                    // Carga los eventos desde la ruta especificada (datos dinámicos desde el backend)
-                    events: '{{ route('administrador.fullcalendar') }}',
-                    // Función que se ejecuta después de que un evento ha sido montado en el calendario
+                    // Define de dónde se cargarán los eventos del calendario (ruta hacia el controlador que devuelve los eventos)
+                    events: '{{ route('cliente.fullcalendar') }}',
+                    // Función que se ejecuta cuando se monta un evento en el calendario
                     eventDidMount: function(info) {
-                        // Cambia el color de fondo si el evento tiene un color definido
+                        // Si el evento tiene un color de fondo definido, aplicarlo al elemento del evento
                         if (info.event.backgroundColor) {
                             info.el.style.backgroundColor = info.event.backgroundColor;
                         }
 
-                        // Cambia el color del borde si el evento tiene un color de borde definido
+                        // Si el evento tiene un color de borde definido, aplicarlo al elemento del evento
                         if (info.event.borderColor) {
                             info.el.style.borderColor = info.event.borderColor;
                         }
                     }
                 });
 
-                // Renderiza el calendario en la página
+                // Renderizar el calendario en la página
                 calendar.render();
             });
         </script>

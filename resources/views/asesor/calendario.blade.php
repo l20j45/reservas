@@ -18,7 +18,7 @@
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Administrador</a></li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Asesor</a></li>
                         <li class="breadcrumb-item active">Calendario</li>
                     </ol>
                 </div>
@@ -61,42 +61,34 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Obtiene el elemento del DOM donde se mostrará el calendario
                 var calendarE1 = document.getElementById('calendar');
 
-                // Inicializa el calendario con FullCalendar
                 var calendar = new FullCalendar.Calendar(calendarE1, {
-                    height: 800,
-                    initialView: 'dayGridMonth', // Vista inicial del calendario (vista por mes)
-                    locale: 'es', // Establece el idioma en español
-                    headerToolbar: { // Configura las opciones de navegación en el calendario
-                        left: 'prev,next today', // Botones prev, next y today a la izquierda
-                        center: 'title', // Título del calendario (mes o día actual) en el centro
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay', // Vistas disponibles: mes, semana, día a la derecha
+                    initialView: 'dayGridMonth',
+                    locale: 'es',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay',
                     },
-                    buttonText: { // Traduce los textos de los botones
-                        today: 'Hoy', // Texto para el botón "Hoy"
-                        month: 'Mes', // Texto para la vista mensual
-                        week: 'Semana', // Texto para la vista semanal
-                        day: 'Día', // Texto para la vista diaria
+                    buttonText: {
+                        today: 'Hoy',
+                        month: 'Mes',
+                        week: 'Semana',
+                        day: 'Día',
                     },
-                    // Carga los eventos desde la ruta especificada (datos dinámicos desde el backend)
-                    events: '{{ route('administrador.fullcalendar') }}',
-                    // Función que se ejecuta después de que un evento ha sido montado en el calendario
+                    events: '{{ route('asesor.fullcalendar') }}',
                     eventDidMount: function(info) {
-                        // Cambia el color de fondo si el evento tiene un color definido
                         if (info.event.backgroundColor) {
                             info.el.style.backgroundColor = info.event.backgroundColor;
                         }
 
-                        // Cambia el color del borde si el evento tiene un color de borde definido
                         if (info.event.borderColor) {
                             info.el.style.borderColor = info.event.borderColor;
                         }
                     }
                 });
 
-                // Renderiza el calendario en la página
                 calendar.render();
             });
         </script>

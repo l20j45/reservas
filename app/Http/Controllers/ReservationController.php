@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Carbon;
 
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
@@ -220,25 +221,26 @@ class ReservationController extends Controller
     }
 
 
-        public function getAllReservations(){
+    public function getAllReservations()
+    {
         $reservations = Reservation::all();
         $events = [];
-        foreach($reservations as $reservation){
+        foreach ($reservations as $reservation) {
             $color = '#28a745';
             $bordercolor = '#28a745';
 
-            if($reservation->reservation_status === 'pendiente'){
+            if ($reservation->reservation_status === 'pendiente') {
                 $color = '#ffc107';
                 $bordercolor = '#ffc107';
-            }elseif($reservation->reservation_status === 'cancelada'){
+            } elseif ($reservation->reservation_status === 'cancelada') {
                 $color = '#dc3545';
                 $bordercolor = '#dc3545';
             }
 
             $events[] = [
-                'title' => 'Reserva de '. $reservation->user->nombres .' '. $reservation->user->apellidos .' con ' . $reservation->consultant->nombres .' '. $reservation->consultant->apellidos,
-                'start' => $reservation->reservation_date.'T'.$reservation->start_time,
-                'end' => $reservation->reservation_date.'T'.$reservation->end_time,
+                'title' => 'Reserva de ' . $reservation->user->nombres . ' ' . $reservation->user->apellidos . ' con ' . $reservation->consultant->nombres . ' ' . $reservation->consultant->apellidos,
+                'start' => $reservation->reservation_date . 'T' . $reservation->start_time,
+                'end' => $reservation->reservation_date . 'T' . $reservation->end_time,
                 'backgroundColor' => $color,
                 'borderColor' => $bordercolor,
             ];
@@ -246,8 +248,81 @@ class ReservationController extends Controller
 
         log::info('Obteniendo todas las reservas para el calendario.');
 
-         // Retorna los eventos en formato JSON
-         header('Content-Type: application/json');
+        // Retorna los eventos en formato JSON
+        header('Content-Type: application/json');
+
+        return response()->json($events);
+    }
+
+
+
+    public function getReservationsAsesor()
+    {
+
+        $consultantId = Auth::user()->id;
+
+        $reservations = Reservation::where('consultand_id', $consultantId)->get();
+
+        $events = [];
+        foreach ($reservations as $reservation) {
+            $color = '#28a745';
+            $bordercolor = '#28a745';
+
+            if ($reservation->reservation_status === 'pendiente') {
+                $color = '#ffc107';
+                $bordercolor = '#ffc107';
+            } elseif ($reservation->reservation_status === 'cancelada') {
+                $color = '#dc3545';
+                $bordercolor = '#dc3545';
+            }
+
+            $events[] = [
+                'title' => 'Reserva con ' . $reservation->user->nombres . ' ' . $reservation->user->apellidos,
+                'start' => $reservation->reservation_date . 'T' . $reservation->start_time,
+                'end' => $reservation->reservation_date . 'T' . $reservation->end_time,
+                'backgroundColor' => $color,
+                'borderColor' => $bordercolor,
+            ];
+        }
+
+        log::info('Obteniendo las reservaciones del asesor para el calendario.');
+        // log::info('Consultant ID: ', ['reservas' => $reservations] );
+
+        return response()->json($events);
+    }
+
+
+    public function getReservationsCliente()
+    {
+
+        $userId = Auth::user()->id;
+
+        $reservations = Reservation::where('user_id', $userId)->get();
+
+        $events = [];
+        foreach ($reservations as $reservation) {
+            $color = '#28a745';
+            $bordercolor = '#28a745';
+
+            if ($reservation->reservation_status === 'pendiente') {
+                $color = '#ffc107';
+                $bordercolor = '#ffc107';
+            } elseif ($reservation->reservation_status === 'cancelada') {
+                $color = '#dc3545';
+                $bordercolor = '#dc3545';
+            }
+
+            $events[] = [
+                'title' => 'Reserva con ' . $reservation->consultant->nombres . ' ' . $reservation->consultant->apellidos,
+                'start' => $reservation->reservation_date . 'T' . $reservation->start_time,
+                'end' => $reservation->reservation_date . 'T' . $reservation->end_time,
+                'backgroundColor' => $color,
+                'borderColor' => $bordercolor,
+            ];
+        }
+
+        log::info('Obteniendo las reservaciones del cliente para el calendario.');
+        log::info('Rservaciones del cliente: ', ['reservas' => $reservations]);
 
         return response()->json($events);
     }
