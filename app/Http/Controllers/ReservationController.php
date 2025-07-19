@@ -333,76 +333,92 @@ class ReservationController extends Controller
     public function completePayment(Request $request)
     {
 
-        $request->validate([
-            'orderID' => 'required',
-            'details' => 'required',
-            'user_id' => 'required|exists:users,id',
-            'consultant_id' => 'required|exists:users,id',
-            'reservation_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i|after_or_equal:09:00|before_or_equal:15:00',
-            'end_time' => 'required|date_format:H:i|before_or_equal:15:00',
-            'total_amount' => 'required|numeric|min:0',
-        ]);
+        try {
 
-        Log::info('Procesando el pago de la reserva.', [
-            'orderID' => $request->orderID,
-            'user_id' => $request->user_id,
-            'consultant_id' => $request->consultant_id,
-            'reservation_date' => $request->reservation_date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'total_amount' => $request->total_amount,
-        ]);
+            $request->validate([
+                'orderID' => 'required',
+                'details' => 'required',
+                'user_id' => 'required|exists:users,id',
+                'consultant_id' => 'required|exists:users,id',
+                'reservation_date' => 'required|date',
+                'start_time' => 'required|date_format:H:i|after_or_equal:09:00|before_or_equal:15:00',
+                'end_time' => 'required|date_format:H:i|before_or_equal:15:00',
+                'total_amount' => 'required|numeric|min:0',
+            ]);
 
-        $details = $request->details;
-        $payment_status = $details['status'];
-
-        if ($payment_status === 'COMPLETED') {
-            Log::info('Voy a generar mi suscripcion.', );
-            $reservation = Reservation::create([
+            Log::info('Procesando el pago de la reserva.', [
+                'orderID' => $request->orderID,
                 'user_id' => $request->user_id,
-                'consultand_id' => $request->consultant_id,
+                'consultant_id' => $request->consultant_id,
                 'reservation_date' => $request->reservation_date,
                 'start_time' => $request->start_time,
                 'end_time' => $request->end_time,
-                'reservation_status' => 'confirmada',
-                'payment_status' => 'pagada',
                 'total_amount' => $request->total_amount,
             ]);
 
-            $transaction_id = $details['id'] ?? null;
-            $payer_id = $details['payer']['payer_id'] ?? null;
-            $payer_email = $details['payer']['email_address'] ?? null;
-            $amount = $details['purchase_units'][0]['amount']['value'] ?? null;
+            $details = $request->details;
+            $payment_status = $details['status'];
 
-            ReservationDetail::create([
-                'reservation_id' => $reservation->id,
-                'transaction_id' => $transaction_id,
-                'payer_id' => $payer_id,
-                'payer_email' => $payer_email,
-                'payment_status' => $payment_status,
-                'amount' => $amount,
-                'response_json' => json_encode($details),
+            if ($payment_status === 'COMPLETED') {
+                Log::info('Voy a generar mi suscripcion.', );
+                $reservation = Reservation::create([
+                    'user_id' => $request->user_id,
+                    'consultand_id' => $request->consultant_id,
+                    'reservation_date' => $request->reservation_date,
+                    'start_time' => $request->start_time,
+                    'end_time' => $request->end_time,
+                    'reservation_status' => 'confirmada',
+                    'payment_status' => 'pagada',
+                    'total_amount' => $request->total_amount,
+                ]);
+
+                $transaction_id = $details['id'] ?? null;
+                $payer_id = $details['payer']['payer_id'] ?? null;
+                $payer_email = $details['payer']['email_address'] ?? null;
+                $amount = $details['purchase_units'][0]['amount']['value'] ?? null;
+
+                ReservationDetail::create([
+                    'reservation_id' => $reservation->id,
+                    'transaction_id' => $transaction_id,
+                    'payer_id' => $payer_id,
+                    'payer_email' => $payer_email,
+                    'payment_status' => $payment_status,
+                    'amount' => $amount,
+                    'response_json' => json_encode($details),
+                ]);
+
+                // $this->sendConfirmationEmail($reservation);
+
+                // $user = User::find($request->user_id);
+                // $userPhone = $user->teléfono;
+                // if($userPhone){
+                //     $this->sendWhastsAppMessage($userPhone, $this->generateWhatsAppMessage($reservation,$user));
+                // }
+                return response()->json(['success' => true]);
+            }
+        } catch (\Exception $e) {
+            // Log si ocurre cualquier otro error durante la creación
+            Log::error('Ocurrió un error al crear la reserva.', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString() // Opcional: para un rastreo completo del error
             ]);
 
-            // $this->sendConfirmationEmail($reservation);
-
-            // $user = User::find($request->user_id);
-            // $userPhone = $user->teléfono;
-            // if($userPhone){
-            //     $this->sendWhastsAppMessage($userPhone, $this->generateWhatsAppMessage($reservation,$user));
-            // }
-
-            return response()->json(['success' => true]);
-        } else {
+            // Redirige con un mensaje de error
             return response()->json(['error' => 'Pago no completado'], 400);
         }
+
     }
 
     public function createCliente()
     {
         $consultants = User::where('role_id', 2)->whereNull('deleted_at')->get();
         return view('cliente.reserva', compact('consultants'));
+    }
+
+        public function indexcliente() {
+        $userId = Auth::user()->id; // Obtener el ID del usuario autenticado
+        $reservations = Reservation::where('user_id', $userId)->get(); // Obtener solo las reservas del usuario
+        return view('cliente.index', compact('reservations'));
     }
 
 

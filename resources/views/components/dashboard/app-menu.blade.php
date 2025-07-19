@@ -38,7 +38,7 @@
                                 <a class="nav-link menu-link" href="{{ route('cliente.reserva') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Nueva Reserva</span>
                                 </a>
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('cliente.reservas') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Consultar Reserva</span>
                                 </a>
                                 <a class="nav-link menu-link" href="{{ route('cliente.calendario') }}">

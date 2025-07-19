@@ -251,7 +251,7 @@
                             total_amount: document.getElementById('total_amount').value, // Monto total de la reserva
                         })
                     }).then(function(response) {
-                        console.log(response);
+
                         if (response.ok) {
                             // Si la respuesta es exitosa, muestra un mensaje de éxito
                             Swal.fire({
