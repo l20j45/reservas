@@ -14,6 +14,8 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\correoReservas;
 
 
 use Illuminate\Support\Facades\View;
@@ -462,7 +464,7 @@ class ReservationController extends Controller
     }
 
 
-    public function sendConfirmationEmailTest()
+    public function phpMailerTest()
     {
 
         $reservation = Reservation::find(1); // Cambia el ID según sea necesario
@@ -477,12 +479,12 @@ class ReservationController extends Controller
 
         try {
             $mail->isSMTP();
-            $mail->Host = env('MAIL_HOST' );
+            $mail->Host = env('MAIL_HOST');
             $mail->SMTPAuth = false;
             // $mail->Username = 'andercode@anderson-bastidas.com';
             // $mail->Password = 'Laravelv1@';
             // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = env('MAIL_PORT' );
+            $mail->Port = env('MAIL_PORT');
 
             $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $mail->addAddress($user->email);
@@ -511,6 +513,20 @@ class ReservationController extends Controller
             Log::error('Error al enviar el correo: ' . $mail->ErrorInfo);
             return back()->with('error', 'Error al enviar el correo :' . $mail->ErrorInfo);
         }
+    }
+
+    public function laravelMailTest()
+    {
+        // Busca un usuario para enviarle el correo (o créalo)
+        $user = User::find(2);
+
+        if ($user) {
+            // Envía el correo
+            Mail::to($user->email)->send(new correoReservas($user));
+            return "¡Correo de prueba enviado!";
+        }
+
+        return "No se encontró el usuario.";
     }
 
 
