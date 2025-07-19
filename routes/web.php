@@ -86,4 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+Route::get('cliente/reserva',[ReservationController::class,'createCliente'])->name('cliente.reserva');
+Route::post('/paypal',[ReservationController::class,'completePayment']);
+
 require __DIR__ . '/auth.php';

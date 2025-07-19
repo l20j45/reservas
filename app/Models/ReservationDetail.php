@@ -9,6 +9,7 @@ class ReservationDetail extends Model
 {
     use HasFactory;
 
+    protected $table = 'reservations_detail';
     protected $fillable = [
       'reservation_id',
       'transaction_id',
