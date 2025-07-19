@@ -10,7 +10,8 @@
         "laravel/breeze": "^2.3",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "opcodesio/log-viewer": "^3.18"
+        "opcodesio/log-viewer": "^3.18",
+        "phpmailer/phpmailer": "^6.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

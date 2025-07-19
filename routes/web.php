@@ -90,4 +90,9 @@ Route::get('cliente/reserva', [ReservationController::class, 'createCliente'])->
 Route::post('/paypal', [ReservationController::class, 'completePayment']);
 Route::get('cliente/reservas',[ReservationController::class,'indexcliente'])->name('cliente.reservas');
 
+
+
+Route::get('/enviar-phpmailer', [ReservationController::class, 'sendConfirmationEmailTest']);
+
+
 require __DIR__ . '/auth.php';

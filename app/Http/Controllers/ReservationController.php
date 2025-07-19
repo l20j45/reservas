@@ -14,6 +14,13 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Auth;
 
+
+
+use Illuminate\Support\Facades\View;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+
 class ReservationController extends Controller
 {
     /**
@@ -409,13 +416,112 @@ class ReservationController extends Controller
 
     }
 
+    public function sendConfirmationEmail($reservation)
+    {
+        $user = User::find($reservation->user_id);
+        $consultant = User::find($reservation->consultant_id);
+
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.hostinger.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'andercode@anderson-bastidas.com';
+            $mail->Password = 'Laravelv1@';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('andercode@anderson-bastidas.com', 'AnderCode Reservas');
+            $mail->addAddress($user->email);
+
+            $mail->CharSet = 'UTF-8';
+
+            $mail->Subject = 'Confirmacion de Reserva - AnderCode';
+
+            $html = View::make('emails.reserva', [
+                'userName' => $user->nombres . ' ' . $user->apellidos,
+                'consultantName' => $consultant->nombres . ' ' . $consultant->apellidos,
+                'reservationDate' => $reservation->reservation_date,
+                'startTime' => $reservation->start_time,
+                'endTime' => $reservation->end_time,
+                'totalAmount' => $reservation->total_amount,
+            ])->render();
+
+            $mail->isHTML(true);
+            $mail->Body = $html;
+
+            $mail->send();
+
+            return back()->with('success', 'Correo enviado correctamente.');
+
+        } catch (Exception $e) {
+            Log::error('Error al enviar el correo: ' . $mail->ErrorInfo);
+            return back()->with('error', 'Error al enviar el correo :' . $mail->ErrorInfo);
+        }
+    }
+
+
+    public function sendConfirmationEmailTest()
+    {
+
+        $reservation = Reservation::find(1); // Cambia el ID según sea necesario
+        Log::info('Enviando correo de confirmación de reserva.', [
+            'reservation_id' => $reservation,
+        ]);
+        $user = User::find($reservation->user_id);
+        $consultant = User::find($reservation->consultand_id);
+
+
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = env('MAIL_HOST' );
+            $mail->SMTPAuth = false;
+            // $mail->Username = 'andercode@anderson-bastidas.com';
+            // $mail->Password = 'Laravelv1@';
+            // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = env('MAIL_PORT' );
+
+            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            $mail->addAddress($user->email);
+
+            $mail->CharSet = 'UTF-8';
+
+            $mail->Subject = 'Confirmacion de Reserva - AnderCode';
+
+            $html = View::make('emails.reserva', [
+                'userName' => $user->nombres . ' ' . $user->apellidos,
+                'consultantName' => $consultant->nombres . ' ' . $consultant->apellidos,
+                'reservationDate' => $reservation->reservation_date,
+                'startTime' => $reservation->start_time,
+                'endTime' => $reservation->end_time,
+                'totalAmount' => $reservation->total_amount,
+            ])->render();
+
+            $mail->isHTML(true);
+            $mail->Body = $html;
+
+            $mail->send();
+
+            return '¡Correo enviado exitosamente con PHPMailer!';
+
+        } catch (Exception $e) {
+            Log::error('Error al enviar el correo: ' . $mail->ErrorInfo);
+            return back()->with('error', 'Error al enviar el correo :' . $mail->ErrorInfo);
+        }
+    }
+
+
     public function createCliente()
     {
         $consultants = User::where('role_id', 2)->whereNull('deleted_at')->get();
         return view('cliente.reserva', compact('consultants'));
     }
 
-        public function indexcliente() {
+    public function indexcliente()
+    {
         $userId = Auth::user()->id; // Obtener el ID del usuario autenticado
         $reservations = Reservation::where('user_id', $userId)->get(); // Obtener solo las reservas del usuario
         return view('cliente.index', compact('reservations'));
