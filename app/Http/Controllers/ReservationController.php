@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\View;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+use Twilio\Rest\Client;
+
 
 class ReservationController extends Controller
 {
@@ -83,17 +85,17 @@ class ReservationController extends Controller
 
         try {
             $reservation = Reservation::create([
-                'user_id' => $request->user_id,
-                'consultand_id' => $request->consultand_id,
-                'reservation_date' => $request->reservation_date,
-                'start_time' => $request->start_time,
-                'end_time' => $request->end_time,
-                'reservation_status' => $request->reservation_status,
-                'payment_status' => $request->payment_status,
-                'total_amount' => $request->total_amount,
+                'user_id' => $request->input('user_id'),
+                'consultand_id' => $request->input('consultand_id'),
+                'reservation_date' => $request->input('reservation_date'),
+                'start_time' => $request->input('start_time'),
+                'end_time' => $request->input('end_time'),
+                'reservation_status' => $request->input('reservation_status'),
+                'payment_status' => $request->input('payment_status'),
+                'total_amount' => $request->input('total_amount'),
             ]);
 
-            Log::info('Reserva creada exitosamente.', ['reservation_id' => $reservation->id]);
+            Log::info('Reserva creada exitosamente.', ['reservation_id' => $reservation->input('user_id')]);
 
             return redirect()->route('reservations.index')->with('success', 'Reserva creada exitosamente.');
 
@@ -397,13 +399,13 @@ class ReservationController extends Controller
                     'response_json' => json_encode($details),
                 ]);
 
-                // $this->sendConfirmationEmail($reservation);
+                $this->sendConfirmationEmail($reservation);
 
-                // $user = User::find($request->user_id);
-                // $userPhone = $user->teléfono;
-                // if($userPhone){
-                //     $this->sendWhastsAppMessage($userPhone, $this->generateWhatsAppMessage($reservation,$user));
-                // }
+                $user = User::find($request->user_id);
+                $userPhone = $user->teléfono;
+                if ($userPhone) {
+                    $this->sendWhastsAppMessage($userPhone, $this->generateWhatsAppMessage($reservation, $user));
+                }
                 return response()->json(['success' => true]);
             }
         } catch (\Exception $e) {
@@ -530,6 +532,53 @@ class ReservationController extends Controller
         return "No se encontró el usuario.";
     }
 
+
+    protected function sendWhastsAppMessage($to, $message)
+    {
+        $sid = env('TWILIO_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $twilio = new Client($sid, $token);
+
+        $twilio->messages->create(
+            "whatsapp:+{$to}",
+            [
+                'from' => env('TWILIO_WHATSAPP_FROM'),
+                'body' => $message
+            ]
+        );
+    }
+
+
+    public function whatsTest()
+    {
+        Log::info('Enviando mensaje de prueba por WhatsApp.');
+        $to = '5213318231058'; // Reemplaza con el número de teléfono real
+        $message = 'Este es un mensaje de prueba desde Twilio WhatsApp.';
+        $sid = env('TWILIO_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $twilio = new Client($sid, $token);
+
+        $message = $twilio->messages->create(
+            "whatsapp:+{$to}",
+            [
+                'from' => "whatsapp:" . env('TWILIO_WHATSAPP_FROM'),
+                'body' => $message
+            ]
+        );
+
+        print ($message->sid);
+    }
+
+    protected function generateWhatsAppMessage($reservation, $user)
+    {
+        return "Hola {$user->nombres}" . " " . "{$user->apellidos}, tu reserva ha sido confirmada.\n" .
+            "Fecha: {$reservation->reservation_date}\n" .
+            "Hora de Inicio: {$reservation->start_time}\n" .
+            "Hora de Fin: {$reservation->end_time}\n" .
+            "Costo Total: {$reservation->total_amount}\n" .
+            "Gracias por elegir nuestros servicios.\n" .
+            "AnderCode.\n";
+    }
 
     public function createCliente()
     {

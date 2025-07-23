@@ -18,6 +18,13 @@ services:
     volumes:
       - valkey_data:/data
 
+  mailpit:
+    image: 'axllent/mailpit:latest'
+    restart: always
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
 volumes:
   reservas: {}
   valkey_data: {}
