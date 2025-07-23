@@ -94,6 +94,7 @@ Route::get('cliente/reservas',[ReservationController::class,'indexcliente'])->na
 
 Route::get('/enviar-phpmailer', [ReservationController::class, 'phpMailerTest']);
 Route::get('/enviar-laravel', [ReservationController::class, 'laravelMailTest']);
+Route::get('/enviar-notificacion/{userId}', [ReservationController::class, 'approve']);
 
 
 require __DIR__ . '/auth.php';

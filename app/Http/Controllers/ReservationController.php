@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\correoReservas;
+use App\Notifications\PedidoEnviado;
 
 
 use Illuminate\Support\Facades\View;
@@ -543,6 +544,19 @@ class ReservationController extends Controller
         return view('cliente.index', compact('reservations'));
     }
 
+
+    public function approve($userId)
+    {
+        // 1. Buscamos al usuario en la base de datos.
+        $user = User::findOrFail($userId);
+
+
+        // 3. ¡Enviamos la notificación!
+        $user->notify(new PedidoEnviado($user));
+
+        // 4. Redirigimos al administrador con un mensaje de éxito.
+        return "¡Correo de prueba enviado!";
+    }
 
 
 

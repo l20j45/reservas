@@ -5,7 +5,9 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "db:start": "podman compose up -d"
+        "db:start": "podman compose up -d ",
+        "db:down": "podman compose down"
+
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
