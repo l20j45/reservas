@@ -33,5 +33,10 @@ class Reservation extends Model
         return $this->belongsTo(User::class, 'consultand_id');
     }
 
+        public function routeNotificationForTwilio()
+    {
+        return '+5213318231058';
+    }
+
 
 }

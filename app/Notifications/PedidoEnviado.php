@@ -8,6 +8,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
+use App\Channels\WhatsAppChannel;
+use App\Channels\Messages\WhatsAppMessage;
+
+
+
 class PedidoEnviado extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -15,7 +20,7 @@ class PedidoEnviado extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public User $user )
+    public function __construct(public User $user)
     {
         //
     }
@@ -27,7 +32,7 @@ class PedidoEnviado extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', WhatsAppChannel::class];
     }
 
     /**
@@ -44,14 +49,22 @@ class PedidoEnviado extends Notification implements ShouldQueue
             ->line('¡Gracias por unirte a nuestra comunidad!');
     }
 
-        public function toDatabase($notifiable)
+    public function toDatabase($notifiable)
     {
         // Este array se codificará a JSON y se guardará en la columna 'data'.
         return [
-            'data'   => 'data',
+            'data' => 'data',
             'user' => 'user',
-            'message'   => 'ha comentado en tu publicación.',
+            'message' => 'ha comentado en tu publicación.',
         ];
+    }
+
+    public function toWhatsApp($notifiable)
+    {
+
+
+        return (new WhatsAppMessage)
+            ->content("Notify Testing");
     }
 
     /**

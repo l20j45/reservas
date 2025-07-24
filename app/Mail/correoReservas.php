@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class correoReservas extends Mailable implements ShouldQueue
+class correoReservas extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -402,7 +402,7 @@ class ReservationController extends Controller
                 $this->sendConfirmationEmail($reservation);
 
                 $user = User::find($request->user_id);
-                $userPhone = $user->teléfono;
+                $userPhone = $user->telefono;
                 if ($userPhone) {
                     $this->sendWhastsAppMessage($userPhone, $this->generateWhatsAppMessage($reservation, $user));
                 }
@@ -535,7 +535,7 @@ class ReservationController extends Controller
 
     protected function sendWhastsAppMessage($to, $message)
     {
-        $sid = env('TWILIO_SID');
+        $sid = env('TWILIO_ACCOUNT_SID');
         $token = env('TWILIO_AUTH_TOKEN');
         $twilio = new Client($sid, $token);
 
@@ -554,7 +554,27 @@ class ReservationController extends Controller
         Log::info('Enviando mensaje de prueba por WhatsApp.');
         $to = '5213318231058'; // Reemplaza con el número de teléfono real
         $message = 'Este es un mensaje de prueba desde Twilio WhatsApp.';
-        $sid = env('TWILIO_SID');
+        $sid = env('TWILIO_ACCOUNT_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $twilio = new Client($sid, $token);
+
+        $message = $twilio->messages->create(
+            "whatsapp:+{$to}",
+            [
+                'from' => "whatsapp:" . env('TWILIO_WHATSAPP_FROM'),
+                'body' => $message
+            ]
+        );
+
+        print ($message->sid);
+    }
+
+    public function notificacionTest()
+    {
+        Log::info('Enviando mensaje de prueba por WhatsApp.');
+        $to = '5213318231058'; // Reemplaza con el número de teléfono real
+        $message = 'Este es un mensaje de prueba desde Twilio WhatsApp.';
+        $sid = env('TWILIO_ACCOUNT_SID');
         $token = env('TWILIO_AUTH_TOKEN');
         $twilio = new Client($sid, $token);
 
@@ -596,15 +616,14 @@ class ReservationController extends Controller
 
     public function approve($userId)
     {
-        // 1. Buscamos al usuario en la base de datos.
+
         $user = User::findOrFail($userId);
 
-
-        // 3. ¡Enviamos la notificación!
+        // 2. Enviamos la notificación.
         $user->notify(new PedidoEnviado($user));
 
-        // 4. Redirigimos al administrador con un mensaje de éxito.
-        return "¡Correo de prueba enviado!";
+        // 3. Redirigimos con un mensaje de éxito.
+        return 'Aqui andamos parienton';
     }
 
 

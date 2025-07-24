@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +22,7 @@ class User extends Authenticatable
      * @var list<string>
      */
 
-     protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'nombres',
         'apellidos',
@@ -56,7 +58,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id' );
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function reservations()
@@ -69,5 +71,9 @@ class User extends Authenticatable
         return $this->hasMany(Reservation::class, 'consultand_id');
     }
 
+    public function routeNotificationForWhatsApp()
+    {
+        return $this->telefono.'2';
+    }
 
 }
