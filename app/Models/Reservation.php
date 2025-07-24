@@ -38,5 +38,11 @@ class Reservation extends Model
         return '+5213318231058';
     }
 
+        public function reservationDetail()
+    {
+        // Una reserva tiene un detalle asociado
+        return $this->hasOne(ReservationDetail::class);
+    }
+
 
 }

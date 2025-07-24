@@ -44,7 +44,7 @@
                                 <a class="nav-link menu-link" href="{{ route('cliente.calendario') }}">
                                     <i class="ri-dashboard-2-line"></i> <span> Calendario</span>
                                 </a>
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('cliente.pagos') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Ver Pagos</span>
                                 </a>
 
@@ -77,7 +77,7 @@
                                 <a class="nav-link menu-link" href="{{ route('reservations.calendario') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Calendario</span>
                                 </a>
-                                <a class="nav-link menu-link" href="#">
+                                <a class="nav-link menu-link" href="{{ route('reservations.pagos') }}">
                                     <i class="ri-dashboard-2-line"></i> <span>Ver pagos</span>
                                 </a>
                                 <a class="nav-link menu-link" href="{{ route('usuarios.index') }}">

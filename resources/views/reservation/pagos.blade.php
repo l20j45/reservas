@@ -6,10 +6,7 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
 
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css">
     @endpush
-
 
     <div class="row">
         <div class="col-12">
@@ -34,7 +31,7 @@
                     <h5 class="card-title mb-0">Pagos</h5>
                 </div>
                 <div class="card-body">
-                    <a href="{{ route('cliente.reserva') }}" class="btn btn-primary waves-effect waves-light">Nueva
+                    <a href="{{ route('reservations.create') }}" class="btn btn-primary waves-effect waves-light">Nueva
                         Reserva</a>
                     <br>
                     <br>
@@ -42,6 +39,8 @@
                         class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                         <thead>
                             <tr>
+                                <th>Id Reserva</th>
+                                <th>Cliente</th>
                                 <th>Consultor</th>
                                 <th>Fecha de Reserva</th>
                                 <th>Hora Inicio</th>
@@ -54,7 +53,11 @@
                         </thead>
                         <tbody>
                             @foreach ($payments as $payment)
+
                                 <tr>
+                                    <td>{{ $payment->reservation->id }}</td>
+                                    <td>{{ $payment->reservation->user->nombres }}
+                                        {{ $payment->reservation->user->apellidos }}</td>
                                     <td>{{ $payment->reservation->consultant->nombres }}
                                         {{ $payment->reservation->consultant->apellidos }}</td>
                                     <td>{{ $payment->reservation->reservation_date }}</td>
@@ -73,8 +76,6 @@
         </div>
     </div>
 
-
-
     @push('scripts')
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -90,7 +91,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+
 
         <script>
             $(document).ready(function() {

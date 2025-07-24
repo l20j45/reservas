@@ -626,6 +626,49 @@ class ReservationController extends Controller
         return 'Aqui andamos parienton';
     }
 
+        public function showPayments(){
+        $payments = ReservationDetail::with(['reservation.user','reservation.consultant'])->get();
+        Log::info('Mostrando todos los pagos.', [
+            'payments' => $payments
+        ]);
+        return view('reservation.pagos',compact('payments'));
+    }
 
+    // Método para mostrar los pagos del cliente autenticado
+    public function showClientPayments(){
+        $userId = Auth::id();
+
+        $payments = ReservationDetail::whereHas('reservation',function($query) use ($userId){
+            $query->where('user_id',$userId);
+        })->get();
+        return view('cliente.pagos',compact('payments'));
+    }
+
+    public function getAllReservationsLanding(){
+        $reservations = Reservation::all();
+        $events = [];
+        foreach($reservations as $reservation){
+            $color = '#28a745';
+            $bordercolor = '#28a745';
+
+            if($reservation->reservation_status === 'pendiente'){
+                $color = '#ffc107';
+                $bordercolor = '#ffc107';
+            }elseif($reservation->reservation_status === 'cancelada'){
+                $color = '#dc3545';
+                $bordercolor = '#dc3545';
+            }
+
+            $events[] = [
+                'title' => $reservation->consultant->nombres .' '. $reservation->consultant->apellidos,
+                'start' => $reservation->reservation_date.'T'.$reservation->start_time,
+                'end' => $reservation->reservation_date.'T'.$reservation->end_time,
+                'backgroundColor' => $color,
+                'borderColor' => $bordercolor,
+            ];
+        }
+
+        return response()->json($events);
+    }
 
 }

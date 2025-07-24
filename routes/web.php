@@ -89,7 +89,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('cliente/reserva', [ReservationController::class, 'createCliente'])->name('cliente.reserva');
 Route::post('/paypal', [ReservationController::class, 'completePayment']);
 Route::get('cliente/reservas',[ReservationController::class,'indexcliente'])->name('cliente.reservas');
-
+Route::get('/reservations/pagos',[ReservationController::class,'showPayments'])->name('reservations.pagos');
+Route::get('/cliente/pagos',[ReservationController::class,'showClientPayments'])->name('cliente.pagos');
+Route::get('welcome/fullcalendar',[ReservationController::class,'getAllReservationsLanding'])->name('welcome.fullcalendar');
 
 
 Route::get('/enviar-phpmailer', [ReservationController::class, 'phpMailerTest']);
